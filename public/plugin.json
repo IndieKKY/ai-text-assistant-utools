@@ -1,0 +1,17 @@
+{
+  "main": "index.html",
+  "logo": "openai.jpg",
+  "features": [
+    {
+      "code": "main",
+      "explain": "AI文本辅助",
+      "cmds": [
+        "TextAI",
+        {
+          "type": "over",
+          "label": "问一下AI"
+        }
+      ]
+    }
+  ]
+}
