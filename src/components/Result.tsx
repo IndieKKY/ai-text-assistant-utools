@@ -11,10 +11,12 @@ import {
 } from '../redux/envReducer'
 import {PAGE_MAIN} from '../const'
 import {useMemoizedFn} from 'ahooks/es'
-import {useCallback, useEffect, useMemo, useRef} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import useOpenai from '../hooks/useOpenai'
 import Markdown from './Markdown'
 import {toast} from 'react-toastify'
+import {AiOutlineCaretRight} from 'react-icons/all'
+import classNames from 'classnames'
 
 const Answer = (props: {
   onRefresh: () => void
@@ -28,6 +30,7 @@ const Answer = (props: {
   const openaiError = useAppSelector(state => state.env.openaiError)
   const envData = useAppSelector(state => state.env.env)
   const temperature = useAppSelector(state => state.env.temperature)
+  const [tempFold, setTempFold] = useState(true)
 
   const onCopy = useCallback(async () => {
     await navigator.clipboard.writeText(openaiResponse??'')
@@ -55,9 +58,12 @@ const Answer = (props: {
           <img className='w-[18px] h-[18px]' src='stop.svg'/>
         </button>}
       </div>
-      <div className='basis-2/4 flex items-center'>
-        <span className='desc mr-2 tooltip tooltip-top z-[100] underline underline-offset-2 decoration-dashed cursor-help' data-tip='创造性越高，每次生成的结果区别越大'>创造性</span>
-        <div className='flex-1 flex flex-col'>
+      <div className='basis-2/4 flex justify-center items-center'>
+        <span title='点击展开/折叠' className='desc flex items-center link link-hover' onClick={() => setTempFold(!tempFold)}>
+          创造性{tempFold && <span>({temperature??1.0})</span>}
+          <AiOutlineCaretRight className={classNames('text-base-content/50 transition transition-all', tempFold?'':'rotate-90')}/>
+        </span>
+        {!tempFold && <div className='ml-2 flex-1 flex flex-col'>
           <input type="range" min="0" max="200" value={(temperature??1)*100} className="range range-info range-xs" onChange={e => {
             dispatch(setTemperature(Number(e.target.value)/100))
           }} />
@@ -68,8 +74,8 @@ const Answer = (props: {
             <span>|</span>
             <span>高</span>
           </div>
-        </div>
-        <span className='ml-1 desc text-xs min-w-[48px] text-center'>{temperature??1.0}</span>
+        </div>}
+        {!tempFold && <span className='ml-1 desc text-xs min-w-[48px] text-center'>{temperature??1.0}</span>}
       </div>
       <div className='basis-1/4 flex justify-end items-center text-sm text-base-content/75'>
         实时输出
@@ -207,7 +213,8 @@ const Result = () => {
     <div className='text-sm text-center py-3' style={{
       color: 'var(--c-light-md)',
     }}>
-      提示：继续时，使用回答作为新的输入内容。
+      继续时，使用回答作为新的输入内容。<br/>
+      创造性越高，每次生成的结果区别越大。
     </div>
   </div>
 }
