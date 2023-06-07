@@ -7,6 +7,7 @@ import {useBoolean, useEventTarget} from 'ahooks'
 import {toast} from 'react-toastify'
 import {openUrl} from '../util/biz_util'
 import Templates from './Templates'
+import {track} from '../util/stats_util'
 
 const Section = (props: {
   title: ShowElement
@@ -55,6 +56,11 @@ const Settings = () => {
     }))
     dispatch(setPage(PAGE_MAIN))
     toast.success('保存成功')
+
+    track('save_settings', {
+      v_set_url: !!serverUrlValue+'',
+      v_set_api_key: !!apiKeyValue+'',
+    })
   }, [apiKeyValue, dispatch, promptValue, serverUrlValue])
 
   const onCancel = useCallback(() => {

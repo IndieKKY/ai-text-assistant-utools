@@ -3,6 +3,7 @@ import {useAppDispatch, useAppSelector} from '../hooks/redux'
 import {setEnvData} from '../redux/envReducer'
 import {setTheme} from '../util/biz_util'
 import {isDarkMode} from '@kky002/kky-util'
+import {track} from '../util/stats_util'
 
 const DARK_MODES = [
   {
@@ -62,6 +63,11 @@ const DarkMode = () => {
               dispatch(setEnvData({
                 theme: mode.value === 'system' ? undefined : mode.value,
               }))
+
+              track('btn', {
+                v_action: 'theme',
+                v_mode: mode.value,
+              })
             }}>
               {mode.name}
             </a>

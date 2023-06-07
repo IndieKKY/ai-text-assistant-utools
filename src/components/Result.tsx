@@ -17,6 +17,7 @@ import Markdown from './Markdown'
 import {toast} from 'react-toastify'
 import {AiOutlineCaretRight} from 'react-icons/all'
 import classNames from 'classnames'
+import {track} from '../util/stats_util'
 
 const Answer = (props: {
   onRefresh: () => void
@@ -35,13 +36,29 @@ const Answer = (props: {
   const onCopy = useCallback(async () => {
     await navigator.clipboard.writeText(openaiResponse??'')
     toast.success('已复制')
+
+    track('btn', {
+      v_action: 'copy',
+    })
   }, [openaiResponse])
 
   const onChangeStream = useCallback((e: any) => {
     dispatch(setEnvData({
       stream: !!e.target.checked
     }))
+
+    track('btn', {
+      v_action: 'stream',
+    })
   }, [dispatch])
+
+  const onFold = useCallback(() => {
+    setTempFold(!tempFold)
+
+    track('btn', {
+      v_action: 'creative_fold',
+    })
+  }, [tempFold])
 
   return <div>
     <div className='w-full min-h-[40px]'><Markdown content={openaiResponse??''}/></div>
@@ -59,7 +76,7 @@ const Answer = (props: {
         </button>}
       </div>
       <div className='basis-2/4 flex justify-center items-center'>
-        <span title='点击展开/折叠' className='desc flex items-center link link-hover' onClick={() => setTempFold(!tempFold)}>
+        <span title='点击展开/折叠' className='desc flex items-center link link-hover' onClick={onFold}>
           创造性{tempFold && <span>({temperature??1.0})</span>}
           <AiOutlineCaretRight className={classNames('text-base-content/50 transition transition-all', tempFold?'':'rotate-90')}/>
         </span>
@@ -100,12 +117,20 @@ const Result = () => {
 
   const onBack = useMemoizedFn(() => {
     dispatch(setPage(PAGE_MAIN))
+
+    track('btn', {
+      v_action: 'back',
+    })
   })
 
   const onContinue = useMemoizedFn(() => {
     dispatch(setText(openaiResponse??''))
     dispatch(setQuestion())
     dispatch(setPage(PAGE_MAIN))
+
+    track('btn', {
+      v_action: 'continue',
+    })
   })
 
   const onRefresh = useCallback(() => {
@@ -117,6 +142,10 @@ const Result = () => {
     dispatch(setOpenaiResponse())
     dispatch(setOpenaiError())
     toast.info('已重新生成')
+
+    track('btn', {
+      v_action: 'refresh',
+    })
   }, [dispatch])
 
   const onStop = useCallback(() => {
@@ -126,6 +155,10 @@ const Result = () => {
     }
     dispatch(setOpenaiStatus('finish'))
     toast.info('已停止生成')
+
+    track('btn', {
+      v_action: 'stop',
+    })
   }, [dispatch])
 
   // 请求openai

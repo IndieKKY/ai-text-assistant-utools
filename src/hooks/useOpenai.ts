@@ -11,6 +11,7 @@ import {
 } from '../redux/envReducer'
 import {LANGUAGE_DEFAULT, LANGUAGES_MAP, PAGE_RESULT, SERVER_URL_DEFAULT} from '../const'
 import {fetchEventSource} from '@microsoft/fetch-event-source'
+import {track} from '../util/stats_util'
 
 export type Callback = (s: string) => void
 
@@ -36,6 +37,10 @@ const useOpenai = () => {
     dispatch(setOpenaiStatus('init'))
     dispatch(setOpenaiError())
     dispatch(setOpenaiResponse())
+
+    track('generate', {
+      v_prompt_length: prompt.length+'',
+    }, false)
   }, [dispatch])
 
   const sendRequest = useCallback(async (prompt: string, ctrl: AbortController) => {

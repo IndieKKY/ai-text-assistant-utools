@@ -3,6 +3,7 @@ import {useAppDispatch, useAppSelector} from '../hooks/redux'
 import {setEnvData, setPage} from '../redux/envReducer'
 import {LANGUAGE_DEFAULT, LANGUAGES, LANGUAGES_MAP, PAGE_RESULT, PAGE_SETTINGS} from '../const'
 import DarkMode from './DarkMode'
+import {track} from '../util/stats_util'
 
 const Footer = () => {
   const dispatch = useAppDispatch()
@@ -38,6 +39,11 @@ const Footer = () => {
                   dispatch(setEnvData({
                     language: lang.code
                   }))
+
+                  track('btn', {
+                    v_action: 'lang',
+                    v_lang: lang.code,
+                  })
                 }}>
                   {lang.name}
                 </a>

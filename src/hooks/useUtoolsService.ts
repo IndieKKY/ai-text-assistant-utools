@@ -6,11 +6,13 @@ import useOpenai from './useOpenai'
 import {findHelpItemByFlows} from '../util/biz_util'
 import {flows} from '../base'
 import {useDebounceEffect} from 'ahooks'
+import {track} from '../util/stats_util'
 
 const useUtoolsService = () => {
   const dispatch = useAppDispatch()
   const {navResult} = useOpenai()
   const temperature = useAppSelector(state => state.env.temperature)
+  const page = useAppSelector(state => state.env.page)
 
   useEffect(() => {
     if (window.utools) {
@@ -39,6 +41,13 @@ const useUtoolsService = () => {
       temperature,
     }))
   }, [temperature], {wait: 1000})
+
+  // stats: page view
+  useEffect(() => {
+    track('view', {
+      v_page: page,
+    })
+  }, [page])
 }
 
 export default useUtoolsService
