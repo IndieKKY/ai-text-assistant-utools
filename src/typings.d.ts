@@ -1,9 +1,3 @@
-
-declare global {
-  interface Window {
-  }
-}
-
 interface Result<T> {
   success: boolean
   code: string
