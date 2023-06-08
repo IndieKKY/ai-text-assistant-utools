@@ -13,6 +13,8 @@ const useUtoolsService = () => {
   const {navResult} = useOpenai()
   const temperature = useAppSelector(state => state.env.temperature)
   const page = useAppSelector(state => state.env.page)
+  const openaiStatus = useAppSelector(state => state.env.openaiStatus)
+  const openaiError = useAppSelector(state => state.env.openaiError)
 
   useEffect(() => {
     if (window.utools) {
@@ -48,6 +50,15 @@ const useUtoolsService = () => {
       v_page: page,
     })
   }, [page])
+
+  // stats: finish
+  useEffect(() => {
+    if (openaiStatus === 'finish') {
+      track('finish', {
+        v_has_error: !!openaiError+'',
+      })
+    }
+  }, [openaiStatus, openaiError])
 }
 
 export default useUtoolsService
