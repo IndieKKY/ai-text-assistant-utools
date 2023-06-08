@@ -45,7 +45,7 @@ const useOpenai = () => {
 
   const sendRequest = useCallback(async (prompt: string, ctrl: AbortController) => {
     console.log('sendRequest:', prompt)
-    const resp = await fetch(`${envData.serverUrl??SERVER_URL_DEFAULT}/v1/chat/completions`, {
+    const resp = await fetch(`${envData.serverUrl?envData.serverUrl:SERVER_URL_DEFAULT}/v1/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const useOpenai = () => {
 
   const sendRequestStream = useCallback(async (prompt: string, ctrl: AbortController) => {
     console.log('sendRequestStream:', prompt)
-    await fetchEventSource(`${envData.serverUrl??SERVER_URL_DEFAULT}/v1/chat/completions`, {
+    await fetchEventSource(`${envData.serverUrl?envData.serverUrl:SERVER_URL_DEFAULT}/v1/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
